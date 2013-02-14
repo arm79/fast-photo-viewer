@@ -269,7 +269,11 @@ body{
     }
 
     function handleUserList(resp){
-       window.people = resp.data; 
+        people.detail = resp.data;
+        people.data = [];
+        for(int i =  0 ; i < resp.data.length ;i ++){
+            people.data[i] = resp.data[i].name;
+        }
     }
 
     function queryFriends(query, uiUpdate){
