@@ -166,7 +166,7 @@ body{
 #gallery{
     width:100%;
     height:100%;
-    margin:40px 0px 0px 0px;
+    margin:60px 0px 0px 0px;
     /*
     -webkit-transition: -webkit-transform 2s;
     */
@@ -262,7 +262,8 @@ body{
     }
 
     function notify(message){
-
+        var mess = document.getElementById('notifyMessage');
+        mess.innerText = message;
     }
 
     function testAPI() {
@@ -570,7 +571,7 @@ body{
     function viewPhotoClicked(){
         if(!isLogInWithFB){
             //alert -- must login
-            notify("Oops! Hello Batman, first, you need to take off your mask. Sign in with Facebook to use!");
+            notify(" Hello Batman, first, you need to take off your mask. Sign in with Facebook to use");
             return;
         }
         var name = document.getElementById('searchbox').value;
@@ -582,13 +583,14 @@ body{
                 gallery.user = people.detail[i].uid;
                 resetGallery();
                 loadPhotoForUser(gallery.user);
+                loadUserInfo(gallery.user);
                 return;
             }
         }
 
         //display message 
         //can not find user with name 
-        notify("We can't find the person you 're looking for. :( ");
+        notify(" We can't find the person you 're looking for. :( ");
     }
 
     function resetGallery(){
@@ -653,6 +655,10 @@ body{
                 data-provide="typeahead" id="searchbox" autocomplete="off"/>
                 <input type="button" value="View Photos" onclick="viewPhotoClicked()"></input>
         </form>
+        </div>
+        <div class="alert" style="display:none">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Oops!</strong><span id="notifyMessage"> Best check yo self, you're not looking too good.</span>
         </div>
         <div id="personInfo">
             <img id="profilePic"></img>
