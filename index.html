@@ -255,6 +255,15 @@ body{
               });
     }
 
+    function queryFriends(query){
+        FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(name,\'' + query + '\') >=0 '}, function(resp){
+
+        }
+    }
+
+    function queryAll(query){
+
+    }
 
     function initData(){
 
@@ -313,11 +322,13 @@ body{
             }
             
             var friends = ["tam","bin", "khue", "thinh"]; 
-            //$('#searchbox').typeahead({source:friends});
+            $('#searchbox').typeahead({source:friends});
+            /*
             $('#searchbox').typeahead({source: function(query, process){
                 //search  
                 process(friends);
             }});
+            */
         };
         //begin fetching data 
         gallery.state.apis[0]= '/me';
@@ -510,7 +521,7 @@ body{
 <div class="navbar-inner">
         <form class="navbar-search pull-left">
             <input type="text" class="search-query" placeholder="Find people ..."
-                data-provide="typeahead" id="searchbox"/>
+                data-provide="typeahead" id="searchbox" auto-complete="off"/>
             
         </form>
         </div>
