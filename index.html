@@ -163,7 +163,7 @@ body{
 <script type="text/javascript" src="js/Ease.js"></script>
 -->
 </head>
-<body>
+<body onload="setupPage()">
 <div id="fb-root"></div>
 
 <script>
@@ -225,6 +225,19 @@ body{
         });
     }
 
+    function setupPage(){
+        window.people = {friendonly:true, data:[], query:""};
+        $('#searchbox').typeahead({source:function(query,process){
+            if(Math.abs(query.length - people.query.length) >=3){ 
+                if(people.friendonly)
+                    queryFriends(query, process);
+                people.query = query;
+            }
+            return people.data  ;
+        }});
+
+    }
+
     window.galleryConfig = {
         MAX_IMG_WIDTH : 300,
         MAX_IMG_HEIGHT: 190,
@@ -255,14 +268,19 @@ body{
               });
     }
 
-    function queryFriends(query){
-        FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(name,\'' + query + '\') >=0 '}, function(resp){
+    function handleUserList(resp){
+       window.people = resp.data; 
+    }
 
-        }
+    function queryFriends(query, uiUpdate){
+        FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(name,\'' + query + '\') >=0 '}, function(){
+            handleUserList(resp);
+            console.log(uiUpdate);
+        });
     }
 
     function queryAll(query){
-
+        FB.api('/search',{q:query,type:'user'}, handleUserList);
     }
 
     function initData(){
@@ -321,8 +339,6 @@ body{
                 }
             }
             
-            var friends = ["tam","bin", "khue", "thinh"]; 
-            $('#searchbox').typeahead({source:friends});
             /*
             $('#searchbox').typeahead({source: function(query, process){
                 //search  
@@ -521,7 +537,8 @@ body{
 <div class="navbar-inner">
         <form class="navbar-search pull-left">
             <input type="text" class="search-query" placeholder="Find people ..."
-                data-provide="typeahead" id="searchbox" auto-complete="off"/>
+                data-items="10"
+                data-provide="typeahead" id="searchbox" autocomplete="off"/>
             
         </form>
         </div>
