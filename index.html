@@ -273,7 +273,7 @@ body{
     }
 
     function queryFriends(query, uiUpdate){
-        FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(name,\'' + query + '\') >=0 '}, function(){
+        FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(name,\'' + query + '\') >=0 '}, function(resp){
             handleUserList(resp);
             console.log(uiUpdate);
         });
