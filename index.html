@@ -227,7 +227,7 @@ body{
 
     window.galleryConfig = {
         MAX_IMG_WIDTH : 300,
-        MAX_IMG_HEIGHT: 210,
+        MAX_IMG_HEIGHT: 190,
         GALLERY_ROWS : 4,
         SCROLL_BUFFER : 10
     };
@@ -312,8 +312,12 @@ body{
                 }
             }
             
+            var friends = ["tam","bin", "khue", "thinh"]; 
             
-            //$(.search-query).typeahead();
+            $(.search-query).typeahead({source: function(query, process){
+                //search  
+                process(friends);
+            });
         };
         //begin fetching data 
         gallery.state.apis[0]= '/me';
@@ -505,7 +509,8 @@ body{
 <div class="navbar" style="position:fixed; left:0px; top:0px; width:100% ">
 <div class="navbar-inner">
         <form class="navbar-search pull-left">
-            <input type="text" class="search-query" placeholder="Find people ..."/>
+            <input type="text" class="search-query" placeholder="Find people ..."
+                data-provide="typeahead"/>
             
         </form>
         </div>
