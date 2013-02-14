@@ -1,9 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link ref="stylesheet" href="css/bootstrap.min.css" media="screen"/>
+<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <style type="text/css">
+.navbar{
+    width:100%;
+    height: 40px;
+    margin:0px;
+	-moz-box-shadow:inset 0px 1px 0px 0px #bdb6b6;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #bdb6b6;
+	box-shadow:inset 0px 1px 0px 0px #bdb6b6;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, rgb(70, 67, 67)), color-stop(1, rgb(0, 0, 0)) );
+	background:-moz-linear-gradient( center top, rgb(70, 67, 67) 5%, rgb(0, 0, 0) 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#665a59', endColorstr='#1a0808');
+	background-color:#665a59;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #000000;
+	display:inline-block;
+	color:#ffffff;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #6b3733;
+	overflow:hidden;
+	position:fixed;
+	z-index:20000;
+	left:-2px;
+	top:0px;
+}
 #closeButton{
     position:absolute;
     top:0px;
@@ -279,6 +310,9 @@ body{
                     loadNextPage();
                 }
             }
+            
+            
+            //$(.search-query).typeahead();
         };
         //begin fetching data 
         gallery.state.apis[0]= '/me';
@@ -401,6 +435,7 @@ body{
         }
         return max;
     }
+    
 
 </script>
 <div id="cover">
@@ -465,14 +500,15 @@ body{
     View Photos	
 	</div>
 </div>
-<div id="container">
 <div class="navbar">
-    <div class="navbar-inner">
         <form class="navbar-search pull-left">
-            <input type="text" class="search-query" placeholder="Search">
+            <input type="text" class="search-query" placeholder="Search"
+            data-provide="typeahead" data-source="['Albama','Alaska','Arizona']"/>
+            
         </form>
-    </div>
 </div>
+<div id="container">
+
 <div id="gallery">
     
 </div>
