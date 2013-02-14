@@ -226,8 +226,11 @@ body{
     }
 
     function setupPage(){
+        String.prototype.trim=function(){return this.replace(/^\s+|\s+$/, '');};
+
         window.people = {friendonly:true, data:[], query:""};
         $('#searchbox').typeahead({source:function(query,process){
+            query = query.trim();
             if(Math.abs(query.length - people.query.length) >=3){ 
                 if(people.friendonly)
                     queryFriends(query, process);
