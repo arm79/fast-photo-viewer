@@ -474,6 +474,19 @@ body{
         }
         return max;
     }
+
+    function searchEnter(event){
+        console.log(event);
+        event.preventDefault();
+        var name = document.getElementById('searchbox');
+        for(var i = 0 ; i < people.detail.length; i ++){
+            if(people.detail[i].name === name){
+                console.log(people.detail[i]);
+                break;
+            }
+        }
+        return false;
+    }
     
 
 </script>
@@ -542,7 +555,7 @@ body{
 </div>
 <div class="navbar" style="position:fixed; left:0px; top:0px; width:100% ">
 <div class="navbar-inner">
-        <form class="navbar-search pull-left">
+        <form class="navbar-search pull-left" method="get" action="#" onsubmit="searchEnter" >
             <input type="text" class="search-query" placeholder="Find people ..."
                 data-items="10"
                 data-provide="typeahead" id="searchbox" autocomplete="off"/>
