@@ -5,11 +5,13 @@
 <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 <style type="text/css">
+#personInfo{
+    position:absolute;
+    top:0px;
+    right:0px;
+}
 #username
 {
-    position:absolute;
-    right:0px;
-    top:0px;
 }
 /*
 .mynavbar{
@@ -112,7 +114,7 @@ body{
     width:100%;
     height:100%;
     position:absolute;
-    z-index:10000;
+    z-index:1000;
 }
 #heartShape
 {
@@ -129,7 +131,7 @@ body{
 #gallery{
     width:100%;
     height:100%;
-    margin:0px;
+    margin:40px 0px 0px 0px;
     /*
     -webkit-transition: -webkit-transform 2s;
     */
@@ -174,6 +176,7 @@ body{
 
 <script>
   // Additional JS functions here
+    var isLogInWithFB = false;
     window.fbAsyncInit = function() {
         FB.init({
               appId      : '535255149848774', // App ID
@@ -220,7 +223,11 @@ body{
             } else {
             // cancelled
             }
-        }, {scope: 'user_relationships,user_photos,friends_photos'});
+        }, {scope: 'user_photos,friends_photos'});
+    }
+
+    function notify(message){
+
     }
 
     function testAPI() {
@@ -255,10 +262,8 @@ body{
     };
 
     function gotoAlbum(){
-        //remove cover
-		var cover = document.getElementById("cover");
-		cover.parentNode.removeChild(cover);
-		//stopSnow();
+		//var cover = document.getElementById("cover");
+		//cover.parentNode.removeChild(cover);
         //go to facebook
         FB.getLoginStatus(function(response) {
               if (response.status === 'connected') {
@@ -297,7 +302,9 @@ body{
     }
 
     function initData(){
-
+        isLogInWithFB = true;
+        var cover = document.getElementById("cover");
+        cover.parentNode.removeChild(cover);
         //setup listeners
         window.gallery = {};
         gallery.ui = document.getElementById('gallery');
@@ -377,6 +384,8 @@ body{
                 loadNextPage();
         });
         */
+
+        loadUserInfo(gallery.user);
     }
 
     function loadPhotoForUser(user){
@@ -389,6 +398,18 @@ body{
             if(gallery.state.page == 1)
                loadNextPage();
        });
+    }
+
+    function loadUserInfo(user){
+        FB.api('/' + user , {fields: 'id, name, picture'}, function(response){
+            console.log(response);
+            var name = response.name;
+            var picture = response.picture.data.url;
+            var username = document.getElementById('username');
+            username.innerText = name;
+            var profilePic = document.getElementById('profilePic');
+            profilePic.src = picture;
+        });
     }
 
     function loadNextPage(){
@@ -512,6 +533,11 @@ body{
     }
 
     function viewPhotoClicked(){
+        if(!isLogInWithFB){
+            //alert -- must login
+            notify("Oops! Hello Batman, first, you need to take off your mask. Sign in with Facebook to use!");
+            return;
+        }
         var name = document.getElementById('searchbox').value;
         console.log(name);
         var i= 0;
@@ -527,6 +553,7 @@ body{
 
         //display message 
         //can not find user with name 
+        notify("We can't find the person you 're looking for. :( ");
     }
 
     function resetGallery(){
@@ -605,7 +632,7 @@ body{
     View Photos	
 	</div>
 </div>
-<div class="navbar" style="position:fixed; left:0px; top:0px; width:100% ">
+<div class="navbar" style="position:fixed; z-index:10000;left:0px; top:0px; width:100% " id="headerBar">
 <div class="navbar-inner">
         <form class="navbar-search pull-left " method="get" action="#" onsubmit="searchEnter(event); return false;" >
             <input type="text" class="search-query" placeholder="Find people ..."
@@ -614,7 +641,10 @@ body{
                 <input type="button" value="View Photos" onclick="viewPhotoClicked()"></input>
         </form>
         </div>
-        <span id="username">Viewing your own photo</span>
+        <div id="personInfo">
+            <img id="profilePic"></img>
+            <span id="username"></span>
+        </div>
 </div>
 <div id="container">
 <div id="gallery">    
