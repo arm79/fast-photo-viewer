@@ -301,11 +301,15 @@ body{
         //setup listeners
         window.gallery = {};
         gallery.ui = document.getElementById('gallery');
+        /*
         gallery.state = {page:0, width: 0, heights: [0,0,0]};
         gallery.state.apis = [];
         gallery.state.isLoading = false;
         gallery.state.prevXOffset = 0;
         gallery.state.popupShown = false;
+        */
+        resetGallery();
+        gallery.user = 'me';
 
         gallery.ui.addEventListener('webkitTransitionEnd', function(event){
             if(gallery.ui.className.indexOf("static") >= 0){
@@ -360,9 +364,9 @@ body{
             */
         };
         //begin fetching data 
-        gallery.state.apis[0]= '/me';
         gallery.state.isLoading = true;
-        //FB.api('/me', {fields:'id,relationship_status,significant_other,photos'},function(response){
+        loadPhotoForUser(gallery.user);
+        /*
         FB.api('/me/photos', {limit:24}, function(response){
             //construct gallery
             console.log(response);
@@ -372,6 +376,19 @@ body{
             if(gallery.state.page == 1)
                 loadNextPage();
         });
+        */
+    }
+
+    function loadPhotoForUser(user){
+        FB.api('/' + user + '/photos', {limit:24}, function(response){
+        //construct gallery
+            console.log(response);
+            gallery.state.isLoading = false;
+            gallery.state.paging = response.paging;
+            createGallery(response.data);
+            if(gallery.state.page == 1)
+               loadNextPage();
+       });
     }
 
     function loadNextPage(){
@@ -493,6 +510,35 @@ body{
         }
         return false;
     }
+
+    function viewPhotoClicked(){
+        var name = document.getElementById('searchbox').value;
+        console.log(name);
+        var i= 0;
+        for(i = 0 ; i < people.detail.length; i++){
+            if(people.detail[i].name === name){
+                console.log(people.detail[i]);
+                gallery.user = people.detail[i].uid;
+                resetGallery();
+                loadPhotoForUser(gallery.user);
+                return;
+            }
+        }
+
+        //display message 
+        //can not find user with name 
+    }
+
+    function resetGallery(){
+        $('.gallery-row').html('');
+        gallery.state = {page:0, width: 0, heights: [0,0,0]};
+        gallery.state.apis = [];
+        gallery.state.isLoading = false;
+        gallery.state.prevXOffset = 0;
+        gallery.state.popupShown = false;
+    }
+
+    
     
 
 </script>
@@ -561,11 +607,11 @@ body{
 </div>
 <div class="navbar" style="position:fixed; left:0px; top:0px; width:100% ">
 <div class="navbar-inner">
-        <form class="navbar-search pull-left" method="get" action="#" onsubmit="searchEnter" >
+        <form class="navbar-search pull-left " method="get" action="#" onsubmit="searchEnter(event); return false;" >
             <input type="text" class="search-query" placeholder="Find people ..."
                 data-items="10"
                 data-provide="typeahead" id="searchbox" autocomplete="off"/>
-            
+                <input type="button" value="View Photos"></input>
         </form>
         </div>
         <span id="username">Viewing your own photo</span>
