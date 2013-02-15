@@ -361,7 +361,7 @@ body{
         FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(lower(name),lower(\'' + query + '\')) >=0 '}, function(resp){
             handleUserList(resp);            
             topSpinner.stop();
-            topSpinner = null;
+//            topSpinner = null;
         });
     }
 
@@ -371,7 +371,7 @@ body{
         //FB.api('/fql',{q:'SELECT uid,name FROM user WHERE strpos(lower(name), lower(\'' + query + '\')) >= 0'}, function(resp){
         	handleUserList(resp);
         	topSpinner.stop();
-        	topSpinner = null;
+        	//topSpinner = null;
         });
     }
 
