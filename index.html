@@ -291,8 +291,7 @@ body{
             }
             return people.data  ;
         }});
-		
-		
+		//showTopSpinner();
     }
 
 
@@ -312,13 +311,13 @@ body{
 		  className: 'spinner', // The CSS class to assign to the spinner
 		  zIndex: 2e9, // The z-index (defaults to 2000000000)
 		  top: '10px', // Top position relative to parent in px
-		  left: '350px' // Left position relative to parent in px
+		  left: '480px' // Left position relative to parent in px
 		};
 
-		if(!topSpinner){
+		//if(!topSpinner){
 			var topSpinnerDiv = document.getElementById('topSpinner');
 			window.topSpinner = new Spinner(opts).spin(topSpinnerDiv);
-		}
+		//}
 	}
     window.galleryConfig = {
         MAX_IMG_WIDTH : 300,
