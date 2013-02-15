@@ -4,6 +4,7 @@
 <link href="css/bootstrap.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/spin.min.js"></script>
 <style type="text/css">
 .facebook-photos{
     font-size:60px;
@@ -264,6 +265,7 @@ body{
     function notify(message){
         var mess = document.getElementById('notifyMessage');
         mess.innerText = message;
+        $('.alert').css('display','block');
     }
 
     function testAPI() {
@@ -283,11 +285,34 @@ body{
             if(Math.abs(query.length - people.query.length) >=3){ 
                 if(people.friendonly)
                     queryFriends(query, process);
+                else 
+                	queryAll(query);
                 people.query = query;
             }
             return people.data  ;
         }});
+		
+		var opts = {
+		  lines: 11, // The number of lines to draw
+		  length: 4, // The length of each line
+		  width: 3, // The line thickness
+		  radius: 6, // The radius of the inner circle
+		  corners: 1, // Corner roundness (0..1)
+		  rotate: 0, // The rotation offset
+		  color: '#ccc', // #rgb or #rrggbb
+		  speed: 0.9, // Rounds per second
+		  trail: 60, // Afterglow percentage
+		  shadow: false, // Whether to render a shadow
+		  hwaccel: false, // Whether to use hardware acceleration
+		  className: 'spinner', // The CSS class to assign to the spinner
+		  zIndex: 2e9, // The z-index (defaults to 2000000000)
+		  top: '10px', // Top position relative to parent in px
+		  left: '350px' // Left position relative to parent in px
+		};
 
+		var topSpinnerDiv = document.getElementById('topSpinner');
+		window.topSpinner = new Spinner(opts).spin(topSpinnerDiv);
+		topSpinner.stop();
     }
 
     window.galleryConfig = {
@@ -327,14 +352,19 @@ body{
     }
 
     function queryFriends(query, uiUpdate){
+    	topSpinner.spin();
         FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(lower(name),lower(\'' + query + '\')) >=0 '}, function(resp){
-            handleUserList(resp);
-            console.log(uiUpdate);
+            handleUserList(resp);            
+            topSpinner.stop();
         });
     }
 
     function queryAll(query){
-        FB.api('/search',{q:query,type:'user'}, handleUserList);
+    	topSpinner.spin();
+        FB.api('/search',{q:query,type:'user'}, function(resp){
+        	handleUserList(resp);
+        	topSpinner.stop();
+        });
     }
 
     function initData(){
@@ -450,12 +480,14 @@ body{
 
     function loadNextPage(){
         gallery.state.isLoading  = true;
+        topSpinner.spin();
         FB.api(gallery.state.paging.next, function(resp){
             console.log("next page " + resp);
             gallery.state.isLoading = false;
-                                                                                            gallery.state.paging = resp.paging;
-                                                                                            createGallery(resp.data);
-                                                                                        });
+			gallery.state.paging = resp.paging;
+			createGallery(resp.data);
+			topSpinner.stop();
+		});
     }
 
     function createGallery(photos){
@@ -602,7 +634,16 @@ body{
         gallery.state.popupShown = false;
     }
 
+    function dismissAlert(){
+    	$('.alert').css('display','none');
+    }
     
+    function toggleSearch(checkbox){
+    	if(checkbox.checked)
+    		people.friendonly = true;
+    	else 
+    		people.friendonly = false;
+    }
     
 
 </script>
@@ -662,15 +703,20 @@ body{
 <div class="navbar" style="position:fixed; z-index:10000;left:0px; top:0px; width:100% " id="headerBar">
 <div class="navbar-inner">
         <form class="navbar-search pull-left " method="get" action="#" onsubmit="searchEnter(event); return false;" >
+
+
+      		<input type="checkbox" name="friendonly" id="friendonly" checked="true"  onchange='toggleSearch(this);'> Friend Only &nbsp; &nbsp;
             <input type="text" class="search-query" placeholder="Find people ..."
                 data-items="10"
                 data-provide="typeahead" id="searchbox" autocomplete="off"/>
-                <input type="button" value="View Photos" onclick="viewPhotoClicked()"></input>
+            <input type="button" value="View Photos" onclick="viewPhotoClicked()"></input>
+			            
         </form>
+        <div id="topSpinner" ></div>
         </div>
-        <div class="alert" style="display:none">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>Oops!</strong><span id="notifyMessage"> Best check yo self, you're not looking too good.</span>
+        <div class="alert alert-error">
+          	<button type="button" class="close" onclick="dismissAlert()">&times;</button>
+        	<strong>Oops!</strong><span id="notifyMessage"> Best check yo self, you're not looking too good.</span>
         </div>
         <div id="personInfo">
             <img id="profilePic"></img>
