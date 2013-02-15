@@ -362,7 +362,8 @@ body{
 
     function queryAll(query){
     	topSpinner.spin();
-        FB.api('/search',{q:query,type:'user'}, function(resp){
+        //FB.api('/search',{q:query,type:'user'}, function(resp){
+        FB.api('/fql',{q:'SELECT uid,name FROM user WHERE strpos(lower(name), lower(\'' + query + '\')) >= 0'}, function(resp){
         	handleUserList(resp);
         	topSpinner.stop();
         });
