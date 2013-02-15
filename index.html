@@ -292,6 +292,11 @@ body{
             return people.data  ;
         }});
 		
+		
+    }
+
+
+	function showTopSpinner(){
 		var opts = {
 		  lines: 11, // The number of lines to draw
 		  length: 4, // The length of each line
@@ -310,11 +315,11 @@ body{
 		  left: '350px' // Left position relative to parent in px
 		};
 
-		var topSpinnerDiv = document.getElementById('topSpinner');
-		window.topSpinner = new Spinner(opts).spin(topSpinnerDiv);
-		topSpinner.stop();
-    }
-
+		if(!topSpinner){
+			var topSpinnerDiv = document.getElementById('topSpinner');
+			window.topSpinner = new Spinner(opts).spin(topSpinnerDiv);
+		}
+	}
     window.galleryConfig = {
         MAX_IMG_WIDTH : 300,
         MAX_IMG_HEIGHT: 190,
@@ -353,19 +358,21 @@ body{
     }
 
     function queryFriends(query, uiUpdate){
-    	topSpinner.spin();
+		showTopSpinner();
         FB.api('/fql',{q:'SELECT uid,name FROM user where uid IN (SELECT uid2 FROM friend WHERE uid1=me()) AND strpos(lower(name),lower(\'' + query + '\')) >=0 '}, function(resp){
             handleUserList(resp);            
             topSpinner.stop();
+            topSpinner = null;
         });
     }
 
     function queryAll(query){
-    	topSpinner.spin();
+		showTopSpinner();
         FB.api('/search',{q:query,type:'user'}, function(resp){
         //FB.api('/fql',{q:'SELECT uid,name FROM user WHERE strpos(lower(name), lower(\'' + query + '\')) >= 0'}, function(resp){
         	handleUserList(resp);
         	topSpinner.stop();
+        	topSpinner = null;
         });
     }
 
@@ -482,7 +489,7 @@ body{
 
     function loadNextPage(){
         gallery.state.isLoading  = true;
-        topSpinner.spin();
+		showTopSpinner();
         FB.api(gallery.state.paging.next, function(resp){
             console.log("next page " + resp);
             gallery.state.isLoading = false;
@@ -707,7 +714,7 @@ body{
         <form class="navbar-search pull-left " method="get" action="#" onsubmit="searchEnter(event); return false;" >
 
 
-      		<input type="checkbox" name="friendonly" id="friendonly" checked="true"  onchange='toggleSearch(this);'> Friend Only &nbsp; &nbsp;
+      		<input type="checkbox" name="friendonly" id="friendonly" checked="true"  onchange='toggleSearch(this);' disabled="true"> Friend Only &nbsp; &nbsp;
             <input type="text" class="search-query" placeholder="Find people ..."
                 data-items="10"
                 data-provide="typeahead" id="searchbox" autocomplete="off"/>
@@ -716,7 +723,7 @@ body{
         </form>
         <div id="topSpinner" ></div>
         </div>
-        <div class="alert alert-error">
+        <div class="alert alert-error" style="display:none">
           	<button type="button" class="close" onclick="dismissAlert()">&times;</button>
         	<strong>Oops!</strong><span id="notifyMessage"> Best check yo self, you're not looking too good.</span>
         </div>
